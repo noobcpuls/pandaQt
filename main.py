@@ -1,4 +1,4 @@
-import os, subprocess
+import os
 from typing import overload
 from PyQt5.QtGui import QIcon, QStandardItemModel
 from PyQt5.uic.uiparser import QtCore, QtWidgets
@@ -29,7 +29,7 @@ form = resource_path('panda_qt.ui')
 form_class = uic.loadUiType(form)[0]
 
 def render_mpl_table(data, col_width=3.0, row_height=0.625, font_size=14,
-                     header_color='#717ED1', row_colors=['#FFFFFF', 'w'], edge_color='w',
+                     header_color='#717ED1', row_colors=['#FFFFFF', 'w'], edge_color='#000000',
                      bbox=[0, 0, 1, 1], header_columns=0,
                      ax=None, **kwargs):
     if ax is None:
@@ -85,8 +85,9 @@ class Data():
     #calc function
     def calcScore(self):
         for i in range(len(self.__df.index)):
-            score = self.__df.iloc[i, 1] / self.__maxCor if self.__df.iloc[i, 1] != '미응시' else -1
-            if score != -1:
+            correct = self.__df.iloc[i, 1]
+            if correct != -1:
+                score = correct / self.__maxCor
                 score2 = round(score, 2) * 100
                 self.__df.iloc[i, 2] = score2
             else:
@@ -162,7 +163,8 @@ class WindowClass(QMainWindow, form_class) :
         self.setupUi(self)
 
         self.setWindowTitle('판다 성적 입력 프로그램')
-        self.setWindowIcon(QIcon('panda_bear_icon_153300.svg'))
+        icon_path = resource_path('panda_bear_icon_153300.svg')
+        self.setWindowIcon(QIcon(icon_path))
         self.show()
 
         #quit button
@@ -196,8 +198,8 @@ class WindowClass(QMainWindow, form_class) :
         addBtn.clicked.connect(self.addItemToList)
         delBtn = self.delItemBtn
         delBtn.clicked.connect(self.delItemToList)
-        updBtn = self.overWriteBtn
-        updBtn.clicked.connect(self.updateItemToList)
+        # updBtn = self.overWriteBtn
+        # updBtn.clicked.connect(self.updateItemToList)
         loadBtn = self.loadFileBtn
         loadBtn.clicked.connect(self.loadFile)
 
@@ -212,7 +214,6 @@ class WindowClass(QMainWindow, form_class) :
         sortStuBtn.clicked.connect(self.sortStudentSignal)
         sortGraBtn = self.sortByGrade
         sortGraBtn.clicked.connect(self.sortGradeSignal)
-        self.printBtn.clicked.connect(self.test)
         self.printSheet.clicked.connect(self.printSheetSignal)
 
         #table widget
@@ -323,10 +324,21 @@ class WindowClass(QMainWindow, form_class) :
             book = load_workbook(file)
 
             if item in book.sheetnames:
-                book.remove(book[item])
-                book.save(file)
+                if len(book.sheetnames) < 2:
+                    book1 = book.create_sheet()
+                    book1.title = '~~~'
+                    book1['A1'] = '~~~'
 
-                data.saveToExcel(pandaGrade, itemText)
+                    book.remove(book[item])
+                    data.saveToExcel(pandaGrade, itemText)
+
+                    book.remove(book['~~~'])
+                    book.save(file)
+                else:
+                    book.remove(book[item])
+                    book.save(file)
+
+                    data.saveToExcel(pandaGrade, itemText)
 
                 pandaList.takeItem(cur_row)
                 pandaList.insertItem(cur_row, itemText)
@@ -487,16 +499,7 @@ class WindowClass(QMainWindow, form_class) :
         
         fig,ax = render_mpl_table(df, header_columns=0, col_width=2.0)
         fig.savefig('table.pdf')
-
-
-    def test(self):
-        print(data.getDf()) #delete this.
-        print('hello')
-        self.printSheetSignal()
-        if isWindow():
-            os.startfile('table.pdf', 'print')
                 
-
 
 if __name__ == "__main__" :
     #QApplication : 프로그램을 실행시켜주는 클래스
