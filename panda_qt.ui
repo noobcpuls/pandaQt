@@ -102,19 +102,6 @@
     </property>
    </item>
   </widget>
-  <widget class="QPushButton" name="printBtn">
-   <property name="geometry">
-    <rect>
-     <x>630</x>
-     <y>506</y>
-     <width>160</width>
-     <height>40</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>프린트</string>
-   </property>
-  </widget>
   <widget class="QDateEdit" name="dateEdit">
    <property name="geometry">
     <rect>
@@ -285,19 +272,6 @@
      <string>불러오기...</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="overWriteBtn">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>480</y>
-      <width>113</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>현재 표 저장</string>
-    </property>
-   </widget>
   </widget>
   <widget class="QLabel" name="labelDate_2">
    <property name="geometry">
@@ -413,7 +387,7 @@
   <widget class="QPushButton" name="printSheet">
    <property name="geometry">
     <rect>
-     <x>390</x>
+     <x>520</x>
      <y>506</y>
      <width>160</width>
      <height>40</height>
